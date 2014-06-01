@@ -1,7 +1,11 @@
 package de.gianasista.tldr_viewer;
 
+import java.io.IOException;
+
 import android.app.ListActivity;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -20,10 +24,17 @@ public class CommandListActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		 
-		// no more this
-		// setContentView(R.layout.list_fruit);
+		Log.d(CommandListActivity.class.getName(), "onCreate");
+		String[] fileCommandList = FRUITS;
+		AssetManager assetManager = getAssets();
+		try {
+			fileCommandList = assetManager.list("common");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.e(CommandListActivity.class.getName(), e.getMessage());
+		}
  
-		setListAdapter(new ArrayAdapter<String>(this, R.layout.command_list,FRUITS));
+		setListAdapter(new ArrayAdapter<String>(this, R.layout.command_list,fileCommandList));
  
 		ListView listView = getListView();
 		listView.setTextFilterEnabled(true);
@@ -36,5 +47,6 @@ public class CommandListActivity extends ListActivity {
 				((TextView) view).getText(), Toast.LENGTH_SHORT).show();
 			}
 		});
+		
 	}
 }
