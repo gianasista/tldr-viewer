@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="de.gianasista.tldr_viewer.CommandContentActivity"
+            android:label="@string/command_content_label"
+            android:parentActivityName="de.gianasista.tldr_viewer.CommandListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.gianasista.tldr_viewer.CommandListActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -4,5 +4,7 @@
     <string name="app_name">tldr-viewer</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="placeholder_content">Lorem Ipsum</string>
+    <string name="command_content_label">Command Content Label</string>
 
 </resources>

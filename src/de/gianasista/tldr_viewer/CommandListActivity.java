@@ -3,6 +3,7 @@ package de.gianasista.tldr_viewer;
 import java.io.IOException;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,13 +41,19 @@ public class CommandListActivity extends ListActivity {
 		listView.setTextFilterEnabled(true);
  
 		listView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-			    // When clicked, show a toast with the TextView text
-			    Toast.makeText(getApplicationContext(),
-				((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			    CharSequence selectedCommand = ((TextView) view).getText();
+				commandSelected(selectedCommand);
 			}
 		});
 		
+	}
+	
+	private void commandSelected(CharSequence commandName)
+	{
+		Toast.makeText(getApplicationContext(), commandName, Toast.LENGTH_SHORT).show();
+		Intent detailIntent = new Intent(this, CommandContentActivity.class);
+		detailIntent.putExtra("COMMAND_NAME", commandName);
+		startActivity(detailIntent);
 	}
 }
