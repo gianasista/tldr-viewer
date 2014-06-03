@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 public class CommandListActivity extends ListActivity {
 
+	public static final String COMMAND_NAME = "COMMAND_NAME";
 	static final String[] FRUITS = new String[] { "Apple", "Avocado", "Banana",
 		"Blueberry", "Coconut", "Durian", "Guava", "Kiwifruit",
 		"Jackfruit", "Mango", "Olive", "Pear", "Sugar-apple" };
@@ -53,7 +54,7 @@ public class CommandListActivity extends ListActivity {
 	{
 		Toast.makeText(getApplicationContext(), commandName, Toast.LENGTH_SHORT).show();
 		Intent detailIntent = new Intent(this, CommandContentActivity.class);
-		detailIntent.putExtra("COMMAND_NAME", commandName);
+		detailIntent.putExtra(COMMAND_NAME, commandName);
 		startActivity(detailIntent);
 	}
 }
