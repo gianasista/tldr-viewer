@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
 /**
@@ -37,13 +38,14 @@ public class CommandContentActivity extends Activity
 			String line;
 			
 			while( (line=bufferedReader.readLine()) != null)
-				fileContent.append(line);
+				fileContent.append(line).append("\n");
 		} catch (IOException e) {
 			// TODO Close Stream
 			e.printStackTrace();
 		}
 		
 		textView.setText(fileContent);
+		textView.setMovementMethod(new ScrollingMovementMethod());
 	}
 
 }
