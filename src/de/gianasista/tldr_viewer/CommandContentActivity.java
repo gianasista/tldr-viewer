@@ -8,6 +8,7 @@ import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 import de.gianasista.tldr_viewer.util.MdFileContentParser;
+import de.gianasista.tldr_viewer.util.TldrContentProvider;
 
 /**
  * @author vera
@@ -28,7 +29,7 @@ public class CommandContentActivity extends Activity
 		for(CharSequence line : lines)
 			textView.append(line);
 			*/
-		textView.setText(Html.fromHtml(MdFileContentParser.parseContentFromAsset(getAssets(), commandName)));
+		textView.setText(new TldrContentProvider(getAssets()).getHtmlContentStringForCommand(commandName));
 		//textView.append(Html.fromHtml("<font color='#0000FF'>Blue test</font>"));
 		textView.setMovementMethod(new ScrollingMovementMethod());
 	}

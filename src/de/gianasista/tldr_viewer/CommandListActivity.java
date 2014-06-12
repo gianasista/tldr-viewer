@@ -2,6 +2,7 @@ package de.gianasista.tldr_viewer;
 
 import java.io.IOException;
 
+import de.gianasista.tldr_viewer.util.TldrContentProvider;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -27,16 +28,8 @@ public class CommandListActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		 
 		Log.d(CommandListActivity.class.getName(), "onCreate");
-		String[] fileCommandList = FRUITS;
-		AssetManager assetManager = getAssets();
-		try {
-			fileCommandList = assetManager.list("common");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Log.e(CommandListActivity.class.getName(), e.getMessage());
-		}
- 
-		setListAdapter(new ArrayAdapter<String>(this, R.layout.command_list,fileCommandList));
+		 
+		setListAdapter(new ArrayAdapter<String>(this, R.layout.command_list,new TldrContentProvider(getAssets()).getCommandList()));
  
 		ListView listView = getListView();
 		listView.setTextFilterEnabled(true);
