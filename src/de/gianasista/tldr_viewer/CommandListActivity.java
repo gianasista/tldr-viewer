@@ -1,8 +1,8 @@
 package de.gianasista.tldr_viewer;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.gianasista.tldr_viewer.util.TldrContentProvider;
 
-public class CommandListActivity extends Activity {
+public class CommandListActivity extends ActionBarActivity {
 
 	public static final String COMMAND_NAME = "COMMAND_NAME";
 	
@@ -36,22 +36,7 @@ public class CommandListActivity extends Activity {
 			    CharSequence selectedCommand = ((TextView) view).getText();
 				commandSelected(selectedCommand);
 			}
-		});
-		
-		/*
-		setListAdapter(new ArrayAdapter<String>(this, R.layout.command_list,new TldrContentProvider(getAssets()).getCommandList()));
- 
-		ListView listView = getListView();
-		listView.setTextFilterEnabled(true);
- 
-		listView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			    CharSequence selectedCommand = ((TextView) view).getText();
-				commandSelected(selectedCommand);
-			}
-		});
-		*/
-		
+		});				
 	}
 	
 	private void commandSelected(CharSequence commandName)
