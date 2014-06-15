@@ -1,11 +1,7 @@
 package de.gianasista.tldr_viewer;
 
-import java.io.IOException;
-
-import de.gianasista.tldr_viewer.util.TldrContentProvider;
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,20 +11,34 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.gianasista.tldr_viewer.util.TldrContentProvider;
 
-public class CommandListActivity extends ListActivity {
+public class CommandListActivity extends Activity {
 
 	public static final String COMMAND_NAME = "COMMAND_NAME";
-	static final String[] FRUITS = new String[] { "Apple", "Avocado", "Banana",
-		"Blueberry", "Coconut", "Durian", "Guava", "Kiwifruit",
-		"Jackfruit", "Mango", "Olive", "Pear", "Sugar-apple" };
+	
+	private ListView commandListView;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
-		 
+		setContentView(R.layout.command_list); 
 		Log.d(CommandListActivity.class.getName(), "onCreate");
-		 
+		commandListView = (ListView) findViewById(R.id.id_command_list_view);
+		
+		ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.command_list_item,new TldrContentProvider(getAssets()).getCommandList());
+		commandListView.setAdapter(listAdapter);
+		
+		commandListView.setOnItemClickListener(new OnItemClickListener()
+		{
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			    CharSequence selectedCommand = ((TextView) view).getText();
+				commandSelected(selectedCommand);
+			}
+		});
+		
+		/*
 		setListAdapter(new ArrayAdapter<String>(this, R.layout.command_list,new TldrContentProvider(getAssets()).getCommandList()));
  
 		ListView listView = getListView();
@@ -40,6 +50,7 @@ public class CommandListActivity extends ListActivity {
 				commandSelected(selectedCommand);
 			}
 		});
+		*/
 		
 	}
 	
