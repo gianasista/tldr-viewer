@@ -3,6 +3,8 @@ package de.gianasista.tldr_viewer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,9 +31,11 @@ public class CommandListActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.command_list); 
 		Log.d(CommandListActivity.class.getName(), "onCreate");
-		commandListView = (ListView) findViewById(R.id.id_command_list_view);
 		
-		ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.command_list_item,new TldrContentProvider(getAssets()).getCommandList());
+		commandListView = (ListView) findViewById(R.id.id_command_list_view);
+		commandListView.setTextFilterEnabled(true);
+		
+		final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.command_list_item,new TldrContentProvider(getAssets()).getCommandList());
 		commandListView.setAdapter(listAdapter);
 		
 		commandListView.setOnItemClickListener(new OnItemClickListener()
@@ -39,7 +44,23 @@ public class CommandListActivity extends ActionBarActivity {
 			    CharSequence selectedCommand = ((TextView) view).getText();
 				commandSelected(selectedCommand);
 			}
-		});				
+		});	
+		
+		EditText searchField = (EditText) findViewById(R.id.id_search_field);
+		searchField.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				listAdapter.getFilter().filter(s);
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
 	}
 	
 	@Override
