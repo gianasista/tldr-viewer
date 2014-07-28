@@ -35,8 +35,14 @@ public class MdFileContentParser
 				parsedLine = "<i>"+trimmedLine+"</i>";
 			else if(line.startsWith("-"))
 				parsedLine = trimmedLine;
-			else if(line.startsWith("`"))
+			else if(line.startsWith("`")) 
+			{
+				// line ends with ` so let's remove it
+				trimmedLine = trimmedLine.substring(0, trimmedLine.length()-1);
+				
 				parsedLine = "<tt>"+trimmedLine+"</tt>";
+			}
+				
 			}
 		
 		return parsedLine.concat("<br/>");
