@@ -1,5 +1,7 @@
 package de.gianasista.tldr_viewer;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,10 +20,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.gianasista.tldr_viewer.util.TldrContentProvider;
+import de.gianasista.tldr_viewer.util.TldrPreferences;
 
 public class CommandListActivity extends ActionBarActivity {
 
 	public static final String COMMAND_NAME = "COMMAND_NAME";
+	private String userChoice;
 	
 	private ListView commandListView;
 	
@@ -35,8 +39,7 @@ public class CommandListActivity extends ActionBarActivity {
 		commandListView = (ListView) findViewById(R.id.id_command_list_view);
 		commandListView.setTextFilterEnabled(true);
 		
-		final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.command_list_item,new TldrContentProvider(getAssets()).getCommandList());
-		commandListView.setAdapter(listAdapter);
+		updateListData();
 		
 		commandListView.setOnItemClickListener(new OnItemClickListener()
 		{
@@ -48,9 +51,11 @@ public class CommandListActivity extends ActionBarActivity {
 		
 		EditText searchField = (EditText) findViewById(R.id.id_search_field);
 		searchField.addTextChangedListener(new TextWatcher() {
+			@SuppressWarnings("unchecked")
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				listAdapter.getFilter().filter(s);
+			public void onTextChanged(CharSequence s, int start, int before, int count) 
+			{
+				((ArrayAdapter<String>)commandListView.getAdapter()).getFilter().filter(s);
 			}
 			
 			@Override
@@ -61,6 +66,12 @@ public class CommandListActivity extends ActionBarActivity {
 			public void afterTextChanged(Editable s) {
 			}
 		});
+	}
+	
+	private void updateListData()
+	{
+		final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.command_list_item, new TldrContentProvider(this).getCommandList());
+		commandListView.setAdapter(listAdapter);
 	}
 	
 	@Override
@@ -76,14 +87,42 @@ public class CommandListActivity extends ActionBarActivity {
 	{
 		switch(item.getItemId())
 		{
-			case (R.id.action_settings): return true;
+			case (R.id.action_settings): actionSettings(); return true;
 			default: return super.onOptionsItemSelected(item);
 		}
 	}
 	
 	private void actionSettings()
 	{
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.settings_title);
+		builder.setPositiveButton(R.string.settings_ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) 
+			{
+				TldrPreferences.setCurrentPlatform(userChoice);
+				updateListData();
+			}
+		});
+		builder.setNegativeButton(R.string.settings_cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) 
+			{
+				// Nothing to do, just dismiss
+			}
+		});
 		
+		//getSharedPreferences(TldrPreferences.TLDR_PREFS_NAME, Context.MODE_PRIVATE).getString(TldrPreferences.KEY_PLATFORM, "common.txt");
+		builder.setSingleChoiceItems(TldrPreferences.possibleChoices, TldrPreferences.getIndexOfCurrentPlaformChoice(), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) 
+			{
+				userChoice = TldrPreferences.possibleChoices[which];
+			}
+		});
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 	
 	private void commandSelected(CharSequence commandName)

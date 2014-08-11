@@ -33,7 +33,7 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 		String commandName = getIntent().getStringExtra(CommandListActivity.COMMAND_NAME);
 		getSupportActionBar().setTitle(commandName);
 		
-		contentProvider = new TldrContentProvider(getAssets(), this);
+		contentProvider = new TldrContentProvider(this, this);
 		contentProvider.loadHtmlContentStringForCommand(commandName);
 		textView.setMovementMethod(new ScrollingMovementMethod());
 		

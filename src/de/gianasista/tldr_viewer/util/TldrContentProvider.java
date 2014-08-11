@@ -11,12 +11,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-import de.gianasista.tldr_viewer.CommandListActivity;
 
 /**
  * @author vera
@@ -24,17 +28,17 @@ import de.gianasista.tldr_viewer.CommandListActivity;
  */
 public class TldrContentProvider extends AsyncTask<URL, Void, String>
 {
-	private AssetManager assetManager;
+	private ContextWrapper contextWrapper;
 	private CommandContentDelegate contentDelegate;
 	
-	public TldrContentProvider(AssetManager assetManager)
+	public TldrContentProvider(ContextWrapper wrapper)
 	{
-		this.assetManager = assetManager;
+		this.contextWrapper = wrapper;
 	}
 	
-	public TldrContentProvider(AssetManager assetManager, CommandContentDelegate delegate)
+	public TldrContentProvider(ContextWrapper wrapper, CommandContentDelegate delegate)
 	{
-		this(assetManager);
+		this(wrapper);
 		
 		this.contentDelegate = delegate;
 	}
@@ -42,10 +46,9 @@ public class TldrContentProvider extends AsyncTask<URL, Void, String>
 	public String[] getCommandList()
 	{
 		List<String> resultList = new ArrayList<String>();
-		
 		try
 		{
-			InputStream inputStream = assetManager.open("common.txt");
+			InputStream inputStream = contextWrapper.getAssets().open(TldrPreferences.getCurrentPlatformFile());
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 			String line;
 			
@@ -61,7 +64,7 @@ public class TldrContentProvider extends AsyncTask<URL, Void, String>
 		
 		return stripFileExtensionFromList(resultList.toArray(new String[] {}));
 	}
-		
+	
 	private String[] stripFileExtensionFromList(String[] listWithFileExtension)
 	{
 		List<String> resultList = new ArrayList<String>();
@@ -75,12 +78,23 @@ public class TldrContentProvider extends AsyncTask<URL, Void, String>
 	
 	public void loadHtmlContentStringForCommand(String commandName)
 	{
+		if(!isNetworkAvailable())
+		{
+			contentDelegate.receiveCommandContent("");
+		}
 		// https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/common/ssh.md
 		try {
-			this.execute(new URL("https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/common/"+commandName+".md"));
+			this.execute(new URL("https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/"+TldrPreferences.getCurrentPlatformFromPreferences()+"/"+commandName+".md"));
 		} catch (MalformedURLException e) {
 			Log.e(this.getClass().getName(), e.getMessage());
 		}
+	}
+	
+	private boolean isNetworkAvailable() 
+	{
+	    ConnectivityManager connectivityManager = (ConnectivityManager) contextWrapper.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 
 	@Override

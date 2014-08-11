@@ -7,6 +7,10 @@
     <string name="action_search">Search</string>
     <string name="search_hint">Search command</string>
     <string name="placeholder_content">Loading ...</string>
+    <string name="settings_title">Platform</string>
+    <string name="settings_ok">Ok</string>
+    <string name="settings_cancel">Cancel</string>
     <string name="command_content_label">Command Content Label</string>
+    <string name="connection_error">You have a problem with your internet connection.</string>
 
 </resources>
