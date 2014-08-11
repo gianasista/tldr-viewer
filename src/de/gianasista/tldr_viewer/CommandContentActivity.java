@@ -1,6 +1,11 @@
 package de.gianasista.tldr_viewer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.widget.ProgressBarICS;
 import android.text.Html;
@@ -17,12 +22,17 @@ import de.gianasista.tldr_viewer.util.TldrContentProvider;
  * @author vera
  *
  */
-public class CommandContentActivity extends ActionBarActivity implements CommandContentDelegate
+public class CommandContentActivity extends ActionBarActivity implements CommandContentDelegate, Handler.Callback 
 {
 	private TextView textView;
 	private TldrContentProvider contentProvider;
 	
-	ProgressBar progressBar;
+	private Timer loadingTimer = new Timer();
+	
+	private static final String[] loadingText = { "Loading", "Loading .", "Loading ..", "Loading ..."};
+	private int loadingPos = 0;
+	
+	private Handler loadingUpdateHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -37,19 +47,34 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 		contentProvider.loadHtmlContentStringForCommand(commandName);
 		textView.setMovementMethod(new ScrollingMovementMethod());
 		
-		if(progressBar == null)
-		{
-			progressBar = new ProgressBar(getApplicationContext());
-			addContentView(progressBar, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-		}
-		progressBar.setVisibility(ProgressBar.VISIBLE);
+		loadingUpdateHandler = new Handler(this);
+		
+		TimerTask loadingTask = new TimerTask() {
+			
+			@Override
+			public void run() 
+			{
+				loadingUpdateHandler.sendEmptyMessage(0);
+			}
+			
+		};
+		
+		loadingTimer.schedule(loadingTask, 0, 500);
+		
 	}
 
 	@Override
 	public void receiveCommandContent(String content) 
 	{
-		progressBar.setVisibility(ProgressBar.INVISIBLE);
+		loadingTimer.cancel();
 		textView.setText(Html.fromHtml(content));
+	}
+
+	@Override
+	public boolean handleMessage(Message msg) {
+		textView.setText(loadingText[loadingPos]);
+		loadingPos = (loadingPos+1) % 4;
+		return true;
 	}
 
 }
