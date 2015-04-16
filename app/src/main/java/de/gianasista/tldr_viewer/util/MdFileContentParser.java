@@ -18,8 +18,19 @@ import android.text.Spanned;
  * @author vera
  *
  */
-public class MdFileContentParser 
+public class MdFileContentParser
 {
+    public String parseMdFileContent(String mdFileContent)
+    {
+        StringBuilder result = new StringBuilder();
+        String[] lines = mdFileContent.split("\\n");
+        for(String line : lines) {
+            result.append(parseLine(line));
+        }
+
+        return result.toString();
+    }
+
 	public String parseLine(String line)
 	{
 		String parsedLine = "";

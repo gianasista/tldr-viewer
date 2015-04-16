@@ -11,5 +11,7 @@ android:layout_height="fill_parent">
 	    android:inputType="text" />
 	<ListView android:id="@+id/id_command_list_view"
     	android:layout_width="fill_parent" 
-    	android:layout_height="fill_parent" />
+    	android:layout_height="fill_parent"
+        android:layout_marginLeft="@dimen/tldr_margin"
+        android:layout_marginRight="@dimen/tldr_margin"/>
 </LinearLayout>
