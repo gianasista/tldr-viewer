@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,8 +32,6 @@ import java.util.List;
 
 import de.gianasista.tldr_viewer.backend.Command;
 import de.gianasista.tldr_viewer.backend.TldrApiClient;
-import de.gianasista.tldr_viewer.util.TldrContentProvider;
-import de.gianasista.tldr_viewer.util.TldrPreferences;
 
 public class CommandListActivity extends ActionBarActivity {
 
@@ -51,6 +50,8 @@ public class CommandListActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
 		setContentView(R.layout.command_list); 
 		Log.d(CommandListActivity.class.getName(), "onCreate");
 		
@@ -91,79 +92,22 @@ public class CommandListActivity extends ActionBarActivity {
 		InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		mgr.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
 
+        setProgressBarIndeterminateVisibility(true);
         TldrApiClient.getPages(new TldrApiClient.PagesListCallback() {
             @Override
             public void receivePages(List<Command> list) {
                 tldrCommands = list;
                 Collections.sort(tldrCommands);
                 updateListData();
-
-                /*
-                for(Command command : tldrCommands) {
-                    if(command.getPlatforms().size() > 1)
-                        Log.i(TAG, "Wichtiger Command: "+command.getName()+ "- "+command.getPlatforms());
-                }
-                */
+                setProgressBarIndeterminateVisibility(false);
             }
         });
 	}
 	
 	private void updateListData()
 	{
-		//final ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, R.layout.command_list_item, new TldrContentProvider(this).getCommandList());
         ListAdapter adapter = new CommandListAdapter(this, tldrCommands.toArray(new Command[0]));
 		commandListView.setAdapter(adapter);
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.command_list_actions, menu);
-	    return super.onCreateOptionsMenu(menu);
-
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) 
-	{
-		switch(item.getItemId())
-		{
-			case (R.id.action_settings): actionSettings(); return true;
-			default: return super.onOptionsItemSelected(item);
-		}
-	}
-	
-	private void actionSettings()
-	{
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.settings_title);
-		builder.setPositiveButton(R.string.settings_ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) 
-			{
-				TldrPreferences.setCurrentPlatform(userChoice);
-				updateListData();
-			}
-		});
-		builder.setNegativeButton(R.string.settings_cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) 
-			{
-				// Nothing to do, just dismiss
-			}
-		});
-		
-		//getSharedPreferences(TldrPreferences.TLDR_PREFS_NAME, Context.MODE_PRIVATE).getString(TldrPreferences.KEY_PLATFORM, "common.txt");
-		builder.setSingleChoiceItems(TldrPreferences.possibleChoices, TldrPreferences.getIndexOfCurrentPlaformChoice(), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) 
-			{
-				userChoice = TldrPreferences.possibleChoices[which];
-			}
-		});
-		
-		AlertDialog dialog = builder.create();
-		dialog.show();
 	}
 	
 	private void commandSelected(Command command)
@@ -183,7 +127,21 @@ public class CommandListActivity extends ActionBarActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return super.getView(position, convertView, parent);
+            View view;
+
+            if (convertView == null) {
+                view = getLayoutInflater().inflate(R.layout.command_list_item, parent, false);
+            } else {
+                view = convertView;
+            }
+
+            TextView textCommand = (TextView) view.findViewById(R.id.command_item);
+            Command item = getItem(position);
+            textCommand.setText(item.getName());
+            TextView textPlatform = (TextView) view.findViewById(R.id.command_platform);
+            textPlatform.setText(item.getPlatformString());
+
+            return view;
         }
     }
 }

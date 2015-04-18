@@ -8,14 +8,10 @@ android {
         applicationId "de.gianasista.tldr_viewer"
         minSdkVersion 9
         targetSdkVersion 19
-    }
 
-    //buildTypes {
-    //    release {
-    //        runProguard false
-    //        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-    //    }
-    //}
+        versionCode 2
+        versionName "1.1"
+    }
 }
 
 dependencies {

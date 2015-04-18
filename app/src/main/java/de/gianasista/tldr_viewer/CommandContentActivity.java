@@ -11,11 +11,11 @@ import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.TextView;
 
 import de.gianasista.tldr_viewer.backend.TldrApiClient;
 import de.gianasista.tldr_viewer.util.CommandContentDelegate;
-import de.gianasista.tldr_viewer.util.TldrContentProvider;
 
 /**
  * @author vera
@@ -24,8 +24,7 @@ import de.gianasista.tldr_viewer.util.TldrContentProvider;
 public class CommandContentActivity extends ActionBarActivity implements CommandContentDelegate, Handler.Callback 
 {
 	private TextView textView;
-	private TldrContentProvider contentProvider;
-	
+
 	private Timer loadingTimer;
 	
 	private static final String[] loadingText = { "Loading", "Loading .", "Loading ..", "Loading ..."};
@@ -46,6 +45,7 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_command_content);
 		textView = (TextView)findViewById(R.id.detail_content);
 
@@ -73,6 +73,7 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 
     private void updatePageContent() {
         getSupportActionBar().setTitle(commandName+" ("+platforms[platformIndex]+")");
+        setProgressBarIndeterminateVisibility(true);
         TldrApiClient.getPageContent(commandName, platforms[platformIndex], this);
     }
 
@@ -118,6 +119,7 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 	@Override
 	public void receiveCommandContent(String content) 
 	{
+        setProgressBarIndeterminateVisibility(false);
 		if(loadingTimer != null)
 			loadingTimer.cancel();
 		

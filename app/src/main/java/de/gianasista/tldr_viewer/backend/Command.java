@@ -1,5 +1,7 @@
 package de.gianasista.tldr_viewer.backend;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,5 +37,9 @@ public class Command implements Comparable<Command>{
     @Override
     public int compareTo(Command another) {
         return this.name.compareTo(another.name);
+    }
+
+    public String getPlatformString() {
+        return TextUtils.join(", ", platforms);
     }
 }

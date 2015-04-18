@@ -12,12 +12,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.gianasista.tldr_viewer.util.CommandContentDelegate;
 import de.gianasista.tldr_viewer.util.MdFileContentParser;
-import de.gianasista.tldr_viewer.util.TldrPreferences;
 
 /**
  * Created by vera on 11.04.15.
@@ -30,7 +28,7 @@ public class TldrApiClient {
     private static final AsyncHttpClient httpClient = new AsyncHttpClient();
 
     private static final String RAW_URL = "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/";
-    private static final String LIST_URL = "https://raw.githubusercontent.com/ostera/tldr/feature/index/pages/index.json";
+    private static final String LIST_URL = "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/index.json";
 
     private static final List<Command> EMPTY_COMMAND_LIST = new ArrayList<Command>(0);
 
