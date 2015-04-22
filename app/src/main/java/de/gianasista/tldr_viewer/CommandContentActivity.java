@@ -3,6 +3,7 @@ package de.gianasista.tldr_viewer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -45,8 +46,11 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.activity_command_content);
+        //getActionBar().setBackgroundDrawable(new ColorDrawable(android.R.color.holo_red_dark));
+
+        setContentView(R.layout.activity_command_content);
 		textView = (TextView)findViewById(R.id.detail_content);
 
 		commandName = getIntent().getStringExtra(CommandListActivity.COMMAND_NAME);
@@ -68,6 +72,9 @@ public class CommandContentActivity extends ActionBarActivity implements Command
 		loadingTimer.schedule(loadingTask, 0, 500);
 
         updatePageContent();
+        TextView titleTextView = (TextView) findViewById(R.id.command_title);
+        titleTextView.setText(commandName);
+
 		textView.setMovementMethod(new ScrollingMovementMethod());
 	}
 

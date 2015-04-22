@@ -41,7 +41,8 @@ public class MdFileContentParser
 			String trimmedLine = line.substring(1).trim();
 			
 			if(line.startsWith("#"))
-				parsedLine = "<b><font color='#0000FF'>"+trimmedLine+"</font></b>";
+				//parsedLine = "<b><font color='#0000FF'>"+trimmedLine+"</font></b>";
+				parsedLine = "";
 			else if(line.startsWith(">"))
 				parsedLine = "<i>"+trimmedLine+"</i>";
 			else if(line.startsWith("-"))
@@ -55,7 +56,8 @@ public class MdFileContentParser
 			}
 				
 			}
-		
-		return parsedLine.concat("<br/>");
+
+       // return parsedLine.length() > 0 ? parsedLine.concat("<br/>") : parsedLine;
+        return parsedLine.concat("<br/>");
 	}
 }

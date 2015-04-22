@@ -4,8 +4,24 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical" >
-  
-	<TextView
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:background="#ff0099cc">
+        <TextView
+            android:id="@+id/command_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/tldr_margin"
+            android:layout_alignParentBottom="true"
+            android:textColor="@android:color/white"
+            android:textSize="54dp"
+            android:alpha="1"
+            android:text="@string/placeholder_content" />
+    </RelativeLayout>
+
+    <TextView
 		android:id="@+id/detail_content"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

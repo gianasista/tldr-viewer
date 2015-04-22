@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="19" />
     
     <uses-permission android:name="android.permission.INTERNET" /> 
@@ -19,8 +19,7 @@
         android:name="de.gianasista.tldr_viewer.TldrApplication" >
         <activity
             android:name="de.gianasista.tldr_viewer.CommandListActivity"
-            android:label="@string/app_name" 
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +29,6 @@
         <activity
             android:name="de.gianasista.tldr_viewer.CommandContentActivity"
             android:label="@string/command_content_label"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             android:parentActivityName="de.gianasista.tldr_viewer.CommandListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
