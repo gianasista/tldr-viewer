@@ -10,10 +10,12 @@ import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.gianasista.tldr_viewer.backend.TldrApiClient;
 import de.gianasista.tldr_viewer.util.CommandContentDelegate;
@@ -24,6 +26,8 @@ import de.gianasista.tldr_viewer.util.CommandContentDelegate;
  */
 public class CommandContentActivity extends ActionBarActivity implements CommandContentDelegate, Handler.Callback 
 {
+    private static final String TAG = CommandContentActivity.class.getName();
+
 	private TextView textView;
 
 	private Timer loadingTimer;
@@ -124,19 +128,29 @@ public class CommandContentActivity extends ActionBarActivity implements Command
     }
 
 	@Override
-	public void receiveCommandContent(String content) 
+	public void receiveCommandContent(String content, boolean hasFailure)
 	{
         setProgressBarIndeterminateVisibility(false);
 		if(loadingTimer != null)
 			loadingTimer.cancel();
-		
-		textView.setText(Html.fromHtml(content));
+
+        if(hasFailure)
+        {
+            loadingUpdateHandler.removeMessages(0);
+            Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+            textView.setText("Error");
+            Log.i(TAG, "setError");
+        }
+        else
+		    textView.setText(Html.fromHtml(content));
 	}
 
 	@Override
 	public boolean handleMessage(Message msg) {
 		textView.setText(loadingText[loadingPos]);
 		loadingPos = (loadingPos+1) % 4;
+        Log.i(TAG, "handleMessage");
+
 		return true;
 	}
 

@@ -1,5 +1,8 @@
 package de.gianasista.tldr_viewer.backend;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -14,6 +17,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.gianasista.tldr_viewer.R;
+import de.gianasista.tldr_viewer.TldrApplication;
 import de.gianasista.tldr_viewer.util.CommandContentDelegate;
 import de.gianasista.tldr_viewer.util.MdFileContentParser;
 
@@ -33,31 +38,42 @@ public class TldrApiClient {
     private static final List<Command> EMPTY_COMMAND_LIST = new ArrayList<Command>(0);
 
     public static void getPageContent(String commandName, String platform, final CommandContentDelegate delegate) {
+        if(!isConnected())
+        {
+            delegate.receiveCommandContent(TldrApplication.getAppContext().getString(R.string.connection_error), true);
+            return;
+        }
+
         httpClient.get(getContentUrlForCommandName(commandName, platform), new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, "Http-Error-Code: "+statusCode, throwable);
-                delegate.receiveCommandContent(responseString);
+                delegate.receiveCommandContent(throwable.getMessage(), true);
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                delegate.receiveCommandContent(new MdFileContentParser().parseMdFileContent(responseString));
+                delegate.receiveCommandContent(new MdFileContentParser().parseMdFileContent(responseString), false);
             }
         });
     }
 
     public static void getPages(final PagesListCallback callback) {
+        if(!isConnected()) {
+            callback.receivePages(EMPTY_COMMAND_LIST, true, TldrApplication.getAppContext().getString(R.string.connection_error));
+            return;
+        }
+
         httpClient.get(LIST_URL, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                callback.receivePages(parseCommandList(response));
+                callback.receivePages(parseCommandList(response), false, null);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, "HttpError: "+statusCode, throwable);
-                callback.receivePages(EMPTY_COMMAND_LIST);
+                callback.receivePages(EMPTY_COMMAND_LIST, true, throwable.getMessage());
             }
         });
     }
@@ -89,7 +105,13 @@ public class TldrApiClient {
     }
 
     public interface PagesListCallback {
-        void receivePages(List<Command> list);
+        void receivePages(List<Command> list, boolean hasError, String errorMessage);
     }
 
+    private static boolean isConnected() {
+        ConnectivityManager manager = TldrApplication.getConnectivityManager();
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+    }
 }

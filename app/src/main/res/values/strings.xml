@@ -12,5 +12,6 @@
     <string name="settings_cancel">Cancel</string>
     <string name="command_content_label">Command Content Label</string>
     <string name="connection_error">You have a problem with your internet connection.</string>
+    <string name="list_reload">Reload</string>
 
 </resources>

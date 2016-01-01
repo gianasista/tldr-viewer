@@ -1,17 +1,13 @@
 package de.gianasista.tldr_viewer;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +41,8 @@ public class CommandListActivity extends ActionBarActivity {
 	private ListView commandListView;
 
     private List<Command> tldrCommands = new ArrayList<>(0);
+
+	private MenuItem reloadMenuItem;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -57,8 +55,6 @@ public class CommandListActivity extends ActionBarActivity {
 		
 		commandListView = (ListView) findViewById(R.id.id_command_list_view);
 		commandListView.setTextFilterEnabled(true);
-		
-		updateListData();
 		
 		commandListView.setOnItemClickListener(new OnItemClickListener()
 		{
@@ -91,23 +87,53 @@ public class CommandListActivity extends ActionBarActivity {
 		commandListView.requestFocus();
 		InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		mgr.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
-
-        setProgressBarIndeterminateVisibility(true);
-        TldrApiClient.getPages(new TldrApiClient.PagesListCallback() {
-            @Override
-            public void receivePages(List<Command> list) {
-                tldrCommands = list;
-                Collections.sort(tldrCommands);
-                updateListData();
-                setProgressBarIndeterminateVisibility(false);
-            }
-        });
 	}
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		reloadMenuItem = menu.add(getApplicationContext().getString(R.string.list_reload));
+		reloadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+		reloadItemList();
+
+		return true;
+	}
+
+	private void updateReloadButton() {
+		reloadMenuItem.setVisible(tldrCommands.isEmpty());
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		if(item.getTitle().equals(getApplicationContext().getString(R.string.list_reload)))
+			reloadItemList();
+
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void reloadItemList()
+	{
+		setProgressBarIndeterminateVisibility(true);
+		TldrApiClient.getPages(new TldrApiClient.PagesListCallback() {
+			@Override
+			public void receivePages(List<Command> list, boolean hasError, String errorMessage) {
+				tldrCommands = list;
+				Collections.sort(tldrCommands);
+				updateListData();
+				setProgressBarIndeterminateVisibility(false);
+
+				if(hasError)
+					Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
 	private void updateListData()
 	{
         ListAdapter adapter = new CommandListAdapter(this, tldrCommands.toArray(new Command[0]));
 		commandListView.setAdapter(adapter);
+		updateReloadButton();
 	}
 	
 	private void commandSelected(Command command)
