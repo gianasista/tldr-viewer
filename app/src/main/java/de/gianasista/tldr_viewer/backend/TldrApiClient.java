@@ -33,7 +33,7 @@ public class TldrApiClient {
     private static final AsyncHttpClient httpClient = new AsyncHttpClient();
 
     private static final String RAW_URL = "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/";
-    private static final String LIST_URL = "https://raw.githubusercontent.com/tldr-pages/tldr/master/pages/index.json";
+    private static final String LIST_URL = "https://raw.githubusercontent.com/tldr-pages/tldr-pages.github.io/master/assets/index.json";
 
     private static final List<Command> EMPTY_COMMAND_LIST = new ArrayList<Command>(0);
 
