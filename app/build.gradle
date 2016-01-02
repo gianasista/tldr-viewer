@@ -1,16 +1,34 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        tldr {
+            keyAlias 'tldrandroidkey'
+            keyPassword 'XXX'
+            storeFile file('/Users/vera/android.jks')
+            storePassword 'XXX'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
-
     defaultConfig {
         applicationId "de.gianasista.tldr_viewer"
         minSdkVersion 14
         targetSdkVersion 19
 
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
+    }
+    buildTypes {
+        release {
+            debuggable false
+            jniDebuggable false
+            signingConfig signingConfigs.tldr
+            renderscriptDebuggable false
+            minifyEnabled true
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
+        }
     }
 }
 
